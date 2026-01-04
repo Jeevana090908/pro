@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Portal | Grade System</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="container welcome-hero animate-fade">
+        <h1 style="font-size: 3rem; margin-bottom: 1rem;">Welcome to <span style="color: var(--primary);">GradeSync</span></h1>
+        <p style="color: var(--text-muted); margin-bottom: 4rem;">Secure Academic Management System for Students & Teachers</p>
+
+        <div class="portal-cards">
+            <div class="glass portal-card" onclick="location.href='teacher.html'">
+                <i class="fas fa-chalkboard-teacher"></i>
+                <h2>Teacher Portal</h2>
+                <p style="color: var(--text-muted); margin-top: 1rem;">Manage students, dynamic subjects, and grades.</p>
+            </div>
+
+            <div class="glass portal-card" onclick="location.href='student.html'">
+                <i class="fas fa-user-graduate"></i>
+                <h2>Student Portal</h2>
+                <p style="color: var(--text-muted); margin-top: 1rem;">View your performance, mids, and semester results.</p>
+            </div>
+        </div>
+    </div>
+
+    <footer style="margin-top: auto; padding: 2rem; text-align: center; color: var(--text-muted);">
+        &copy; 2026 GradeSync Academic Structure. All rights reserved.
+    </footer>
+</body>
+</html>
