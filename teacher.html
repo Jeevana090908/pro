@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Portal | GradeSync</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- AUTH SECTION -->
+    <div id="auth-section" class="container">
+        <div class="glass auth-card animate-fade">
+            <div id="login-form">
+                <h2 style="margin-bottom: 2rem;">Teacher Login</h2>
+                <div class="input-group">
+                    <label>Email</label>
+                    <input type="email" id="login-email" placeholder="teacher@school.com">
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="login-password" placeholder="••••••••">
+                    <span class="password-toggle" onclick="togglePassword('login-password')"><i
+                            class="far fa-eye"></i></span>
+                </div>
+                <button class="btn" onclick="handleLogin()">Login</button>
+                <p style="margin-top: 1.5rem; color: var(--text-muted);">
+                    New here? <a href="#" onclick="showSignup()" style="color: var(--primary);">Sign Up</a>
+                </p>
+            </div>
+
+            <div id="signup-form" style="display: none;">
+                <h2 style="margin-bottom: 2rem;">Teacher Sign Up</h2>
+                <div class="input-group">
+                    <label>Name</label>
+                    <input type="text" id="signup-name" placeholder="John Doe">
+                </div>
+                <div class="input-group">
+                    <label>Email</label>
+                    <input type="email" id="signup-email" placeholder="teacher@school.com">
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="signup-password" placeholder="••••••••">
+                    <span class="password-toggle" onclick="togglePassword('signup-password')"><i
+                            class="far fa-eye"></i></span>
+                </div>
+                <button class="btn" onclick="handleSignup()">Sign Up</button>
+                <button class="btn btn-secondary" onclick="showLogin()">Back to Login</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD SECTION -->
+    <div id="dashboard-section" class="container animate-fade" style="display: none;">
+        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <div>
+                <h1>Teacher Dashboard</h1>
+                <p id="welcome-msg" style="color: var(--text-muted);"></p>
+            </div>
+            <button class="btn" style="width: auto; padding-inline: 1.5rem;" onclick="logout()">Logout</button>
+        </header>
+
+        <div class="dashboard-grid">
+            <aside class="glass sidebar">
+                <div class="sidebar-item active" onclick="showView('add-student')"><i class="fas fa-user-plus"></i> Add
+                    Student</div>
+                <div class="sidebar-item" onclick="showView('add-marks')"><i class="fas fa-edit"></i> Add/Edit Marks
+                </div>
+                <div class="sidebar-item" onclick="showView('view-records')"><i class="fas fa-list"></i> View Records
+                </div>
+            </aside>
+
+            <main>
+                <!-- Add Student Form -->
+                <div id="view-add-student" class="glass" style="padding: 2rem;">
+                    <h2 style="margin-bottom: 1.5rem;">Add New Student Details</h2>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="input-group">
+                            <label>Roll No</label>
+                            <input type="text" id="stud-roll" placeholder="Unique ID">
+                        </div>
+                        <div class="input-group">
+                            <label>Name</label>
+                            <input type="text" id="stud-name" placeholder="Full Name">
+                        </div>
+                        <div class="input-group">
+                            <label>Branch</label>
+                            <select id="stud-branch">
+                                <option value="CSE">Computer Science</option>
+                                <option value="IT">Information Tech</option>
+                                <option value="ECE">Electronics</option>
+                                <option value="EEE">Electrical</option>
+                                <option value="MECH">Mechanical</option>
+                                <option value="CIVIL">Civil</option>
+                                <option value="AI">AI & ML</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Section</label>
+                            <input type="text" id="stud-section" placeholder="A, B, or C">
+                        </div>
+                        <div class="input-group">
+                            <label>Year</label>
+                            <select id="stud-year">
+                                <option value="1">1st Year</option>
+                                <option value="2">2nd Year</option>
+                                <option value="3">3rd Year</option>
+                                <option value="4">4th Year</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Semester</label>
+                            <select id="stud-sem">
+                                <option value="1">Semester 1</option>
+                                <option value="2">Semester 2</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn" style="margin-top: 1rem;" onclick="handleAddStudent()">Add Student</button>
+                </div>
+
+                <!-- Add Marks View -->
+                <div id="view-add-marks" class="glass" style="padding: 2rem; display: none;">
+                    <h2 style="margin-bottom: 1.5rem;">Enter Grade Data</h2>
+                    <div class="input-group">
+                        <label>Search Student Roll No</label>
+                        <div style="display: flex; gap: 1rem;">
+                            <input type="text" id="search-roll" placeholder="Enter Roll Number">
+                            <button class="btn" style="width: auto; padding-inline: 1.5rem;"
+                                onclick="findStudentForMarks()">Find</button>
+                        </div>
+                    </div>
+
+                    <div id="marks-form"
+                        style="display: none; border-top: 1px solid var(--glass-border); padding-top: 1.5rem;">
+                        <h3 id="mark-stud-name" style="margin-bottom: 1rem;"></h3>
+                        <div class="input-group">
+                            <label>Number of Subjects</label>
+                            <div style="display: flex; gap: 1rem;">
+                                <input type="number" id="sub-count" value="4">
+                                <button class="btn" style="width: auto; padding-inline: 1.5rem;"
+                                    onclick="generateSubjectInputs()">Set</button>
+                            </div>
+                        </div>
+
+                        <div id="dynamic-subjects"></div>
+                        <button class="btn" style="margin-top: 1.5rem;" onclick="saveAllMarks()">Save All Marks</button>
+                    </div>
+                </div>
+
+                <!-- View Records -->
+                <div id="view-records" style="display: none;">
+                    <div class="stats-grid">
+                        <div class="glass stat-item">
+                            <div class="stat-val" id="stat-total">0</div>
+                            <div style="font-size: 0.9rem; color: var(--text-muted);">Total Students</div>
+                        </div>
+                        <div class="glass stat-item">
+                            <div class="stat-val" id="stat-avg">0</div>
+                            <div style="font-size: 0.9rem; color: var(--text-muted);">Class Average</div>
+                        </div>
+                    </div>
+                    <div class="glass" style="padding: 1.5rem;">
+                        <input type="text" id="table-search" class="glass"
+                            style="width: 100%; padding: 0.8rem; margin-bottom: 1rem;"
+                            placeholder="Search by name or roll no..." oninput="filterTable()">
+                        <div class="table-container">
+                            <table id="records-table">
+                                <thead>
+                                    <tr>
+                                        <th>Roll No</th>
+                                        <th>Name</th>
+                                        <th>Branch</th>
+                                        <th>Year</th>
+                                        <th>Total Marks</th>
+                                        <th>Grade</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- MODAL FOR DUPLICATE STUDENT -->
+    <div id="dup-modal" class="modal">
+        <div class="glass modal-content">
+            <h3>Student Already Exists</h3>
+            <p style="margin: 1.5rem 0; color: var(--text-muted);">Do you want to delete old data and add again?</p>
+            <div style="display: flex; gap: 1rem;">
+                <button class="btn" style="background: var(--danger);" onclick="confirmOverwrite()">Yes,
+                    Overwrite</button>
+                <button class="btn btn-secondary" onclick="closeModal()">No, Keep Existing</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import DB from './database.js';
+
+        // --- Auth Logic ---
+        window.togglePassword = (id) => {
+            const input = document.getElementById(id);
+            const icon = input.nextElementSibling.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'far fa-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'far fa-eye';
+            }
+        };
+
+        window.showSignup = () => {
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('signup-form').style.display = 'block';
+        };
+
+        window.showLogin = () => {
+            document.getElementById('login-form').style.display = 'block';
+            document.getElementById('signup-form').style.display = 'none';
+        };
+
+        window.handleSignup = () => {
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+
+            if (!name || !email || !password) return alert('Fill all fields');
+
+            const res = DB.signupTeacher({ name, email, password });
+            if (res.success) {
+                alert('Signup successful!');
+                showLogin();
+            } else alert(res.msg);
+        };
+
+        window.handleLogin = () => {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            const res = DB.loginTeacher(email, password);
+            if (res.success) {
+                sessionStorage.setItem('teacher', JSON.stringify(res.user));
+                initDashboard();
+            } else alert(res.msg);
+        };
+
+        // --- Dashboard Navigation ---
+        let currentView = 'add-student';
+        window.showView = (id) => {
+            ['add-student', 'add-marks', 'records'].forEach(v => {
+                const el = document.getElementById(`view-${v}`);
+                if (el) el.style.display = 'none';
+            });
+            document.getElementById(`view-${id}`).style.display = 'block';
+
+            document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (id === 'records') updateRecordsList();
+        };
+
+        function initDashboard() {
+            const teacher = JSON.parse(sessionStorage.getItem('teacher'));
+            if (!teacher) return;
+            document.getElementById('auth-section').style.display = 'none';
+            document.getElementById('dashboard-section').style.display = 'block';
+            document.getElementById('welcome-msg').innerText = `Logged in as: ${teacher.name}`;
+        }
+
+        window.logout = () => {
+            sessionStorage.removeItem('teacher');
+            location.reload();
+        };
+
+        // --- Student Management ---
+        let tempRecord = null;
+        window.handleAddStudent = () => {
+            const roll = document.getElementById('stud-roll').value;
+            const name = document.getElementById('stud-name').value;
+            const branch = document.getElementById('stud-branch').value;
+            const section = document.getElementById('stud-section').value;
+            const year = document.getElementById('stud-year').value;
+            const sem = document.getElementById('stud-sem').value;
+
+            if (!roll || !name) return alert('Roll No and Name are required');
+
+            tempRecord = { rollNo: roll, name, branch, section, year, sem };
+            const res = DB.addStudentRecord(tempRecord);
+
+            if (res.exists) {
+                document.getElementById('dup-modal').style.display = 'flex';
+            } else {
+                alert('Student added successfully!');
+                clearStudentForm();
+            }
+        };
+
+        window.confirmOverwrite = () => {
+            DB.overwriteStudentRecord(tempRecord);
+            alert('Old data deleted. New record created.');
+            closeModal();
+            clearStudentForm();
+        };
+
+        window.closeModal = () => document.getElementById('dup-modal').style.display = 'none';
+
+        function clearStudentForm() {
+            ['stud-roll', 'stud-name', 'stud-section'].forEach(id => document.getElementById(id).value = '');
+        }
+
+        // --- Marks Management ---
+        let activeStudent = null;
+        window.findStudentForMarks = () => {
+            const roll = document.getElementById('search-roll').value;
+            const data = DB.getStudentData(roll);
+            if (!data.record) return alert('Student not found');
+
+            activeStudent = data.record;
+            document.getElementById('marks-form').style.display = 'block';
+            document.getElementById('mark-stud-name').innerText = `Updating: ${activeStudent.name} (${activeStudent.rollNo})`;
+            generateSubjectInputs();
+        };
+
+        window.generateSubjectInputs = () => {
+            const count = document.getElementById('sub-count').value;
+            const container = document.getElementById('dynamic-subjects');
+            container.innerHTML = '';
+
+            for (let i = 0; i < count; i++) {
+                container.innerHTML += `
+                    <div class="glass" style="margin-top: 1rem; padding: 1.5rem;">
+                        <div class="input-group">
+                            <label>Subject/Lab ${i + 1} Name</label>
+                            <input type="text" class="sub-name" placeholder="E.g. Mathematics II">
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;">
+                            <div class="input-group"><label>Mid 1</label><input type="number" class="sub-mid1" placeholder="30"></div>
+                            <div class="input-group"><label>Mid 2</label><input type="number" class="sub-mid2" placeholder="30"></div>
+                            <div class="input-group"><label>Sem Exam</label><input type="number" class="sub-exam" placeholder="70"></div>
+                            <div class="input-group"><label>Type</label>
+                                <select class="sub-type">
+                                    <option value="theory">Theory</option>
+                                    <option value="lab">Lab</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        };
+
+        window.saveAllMarks = () => {
+            const subjects = document.querySelectorAll('.sub-name');
+            const mid1s = document.querySelectorAll('.sub-mid1');
+            const mid2s = document.querySelectorAll('.sub-mid2');
+            const exams = document.querySelectorAll('.sub-exam');
+            const types = document.querySelectorAll('.sub-type');
+
+            subjects.forEach((sub, i) => {
+                if (sub.value) {
+                    DB.saveMarks(activeStudent.rollNo, {
+                        type: types[i].value,
+                        subject: sub.value,
+                        sems: {
+                            sem1: {
+                                mid1: parseFloat(mid1s[i].value || 0),
+                                mid2: parseFloat(mid2s[i].value || 0),
+                                exam: parseFloat(exams[i].value || 0)
+                            }
+                        }
+                    });
+                }
+            });
+
+            alert('Marks saved successfully!');
+            document.getElementById('marks-form').style.display = 'none';
+        };
+
+        // --- Records View ---
+        function updateRecordsList() {
+            const db = DB.getData();
+            const tbody = document.querySelector('#records-table tbody');
+            tbody.innerHTML = '';
+
+            db.records.forEach(rec => {
+                const marks = db.marks.filter(m => m.rollNo === rec.rollNo);
+                const total = marks.reduce((sum, m) => sum + m.sem1Result.total, 0);
+                const avg = marks.length > 0 ? (total / marks.length).toFixed(1) : 0;
+
+                let grade = '-';
+                if (avg >= 90) grade = 'O';
+                else if (avg >= 80) grade = 'A+';
+                else if (avg >= 40) grade = 'P';
+                else if (marks.length > 0) grade = 'F';
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${rec.rollNo}</td>
+                        <td>${rec.name}</td>
+                        <td>${rec.branch}</td>
+                        <td>${rec.year}</td>
+                        <td>${total}</td>
+                        <td><b style="color: ${grade === 'F' ? 'var(--danger)' : 'var(--success)'}">${grade}</b></td>
+                        <td>
+                            <button class="btn" style="width: auto; padding: 0.4rem 0.8rem; background: var(--danger);" onclick="deleteMarks('${rec.rollNo}')">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('stat-total').innerText = db.records.length;
+            const classStats = DB.getAllClassStats('CSE', '1', '1');
+            document.getElementById('stat-avg').innerText = classStats ? classStats.average : 0;
+        }
+
+        window.deleteMarks = (rollNo) => {
+            if (confirm('Are you sure you want to delete all marks for this student?')) {
+                const db = DB.getData();
+                db.marks = db.marks.filter(m => m.rollNo !== rollNo);
+                DB.saveData(db);
+                updateRecordsList();
+            }
+        };
+
+        // On Load
+        if (sessionStorage.getItem('teacher')) initDashboard();
+    </script>
+</body>
+
+</html>
