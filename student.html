@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Portal | GradeSync</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- AUTH SECTION -->
+    <div id="auth-section" class="container">
+        <div class="glass auth-card animate-fade">
+            <div id="login-form">
+                <h2 style="margin-bottom: 2rem;">Student Login</h2>
+                <div class="input-group">
+                    <label>Roll No</label>
+                    <input type="text" id="login-roll" placeholder="Enter Your Roll No">
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="login-password" placeholder="••••••••">
+                    <span class="password-toggle" onclick="togglePassword('login-password')"><i
+                            class="far fa-eye"></i></span>
+                </div>
+                <button class="btn" onclick="handleLogin()">Login</button>
+                <p style="margin-top: 1.5rem; color: var(--text-muted);">
+                    First time? <a href="#" onclick="showSignup()" style="color: var(--primary);">Register Now</a>
+                </p>
+            </div>
+
+            <div id="signup-form" style="display: none;">
+                <h2 style="margin-bottom: 2rem;">Student Registration</h2>
+                <div class="input-group">
+                    <label>Roll No</label>
+                    <input type="text" id="signup-roll" placeholder="Unique Roll No">
+                </div>
+                <div class="input-group">
+                    <label>Full Name</label>
+                    <input type="text" id="signup-name" placeholder="John Doe">
+                </div>
+                <div class="input-group">
+                    <label>Branch</label>
+                    <input type="text" id="signup-branch" placeholder="CSE / IT / ECE">
+                </div>
+                <div class="input-group">
+                    <label>Section</label>
+                    <input type="text" id="signup-section" placeholder="A / B / C">
+                </div>
+                <div class="input-group">
+                    <label>Year</label>
+                    <input type="number" id="signup-year" placeholder="1 / 2 / 3 / 4">
+                </div>
+                <div class="input-group">
+                    <label>Create Password</label>
+                    <input type="password" id="signup-password" placeholder="••••••••">
+                    <span class="password-toggle" onclick="togglePassword('signup-password')"><i
+                            class="far fa-eye"></i></span>
+                </div>
+                <button class="btn" onclick="handleSignup()">Complete Registration</button>
+                <button class="btn btn-secondary" onclick="showLogin()">Back to Login</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- STUDENT DASHBOARD -->
+    <div id="dashboard-section" class="container animate-fade" style="display: none;">
+        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <div>
+                <h1>Student Performance</h1>
+                <p id="stud-header" style="color: var(--text-muted);"></p>
+            </div>
+            <button class="btn" style="width: auto; padding-inline: 1.5rem;" onclick="logout()">Logout</button>
+        </header>
+
+        <div class="stats-grid">
+            <div class="glass stat-item">
+                <div class="stat-val" id="stud-avg">0</div>
+                <div style="font-size: 0.9rem; color: var(--text-muted);">Your Average</div>
+            </div>
+            <div class="glass stat-item">
+                <div class="stat-val" id="class-avg">0</div>
+                <div style="font-size: 0.9rem; color: var(--text-muted);">Class Average</div>
+            </div>
+            <div class="glass stat-item">
+                <div class="stat-val" id="stud-rank">--</div>
+                <div style="font-size: 0.9rem; color: var(--text-muted);">Rank</div>
+            </div>
+        </div>
+
+        <div class="glass" style="padding: 2rem;">
+            <h3>Subject-wise Breakup (Semester 1)</h3>
+            <div class="table-container">
+                <table id="performance-table">
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Mid 1</th>
+                            <th>Mid 2</th>
+                            <th>Internal (Avg)</th>
+                            <th>Sem Exam</th>
+                            <th>Final Total</th>
+                            <th>Grade</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import DB from './database.js';
+
+        window.togglePassword = (id) => {
+            const input = document.getElementById(id);
+            const icon = input.nextElementSibling.querySelector('i');
+            input.type = input.type === 'password' ? 'text' : 'password';
+            icon.className = input.type === 'password' ? 'far fa-eye' : 'far fa-eye-slash';
+        };
+
+        window.showSignup = () => {
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('signup-form').style.display = 'block';
+        };
+
+        window.showLogin = () => {
+            document.getElementById('login-form').style.display = 'block';
+            document.getElementById('signup-form').style.display = 'none';
+        };
+
+        window.handleSignup = () => {
+            const data = {
+                rollNo: document.getElementById('signup-roll').value,
+                name: document.getElementById('signup-name').value,
+                branch: document.getElementById('signup-branch').value,
+                section: document.getElementById('signup-section').value,
+                year: document.getElementById('signup-year').value,
+                password: document.getElementById('signup-password').value
+            };
+
+            if (!data.rollNo || !data.password) return alert('Fill all required fields');
+
+            const res = DB.signupStudent(data);
+            if (res.success) {
+                alert('Registration successful!');
+                showLogin();
+            } else alert(res.msg);
+        };
+
+        window.handleLogin = () => {
+            const roll = document.getElementById('login-roll').value;
+            const pass = document.getElementById('login-password').value;
+
+            const res = DB.loginStudent(roll, pass);
+            if (res.success) {
+                sessionStorage.setItem('student', JSON.stringify(res.user));
+                initDashboard();
+            } else alert(res.msg);
+        };
+
+        function initDashboard() {
+            const user = JSON.parse(sessionStorage.getItem('student'));
+            if (!user) return;
+
+            document.getElementById('auth-section').style.display = 'none';
+            document.getElementById('dashboard-section').style.display = 'block';
+            document.getElementById('stud-header').innerText = `${user.name} | ${user.rollNo} | ${user.branch}`;
+
+            const data = DB.getStudentData(user.rollNo);
+            updateView(data);
+        }
+
+        function updateView(data) {
+            const tbody = document.querySelector('#performance-table tbody');
+            tbody.innerHTML = '';
+
+            let totalMarks = 0;
+            data.marks.forEach(m => {
+                const res = m.sem1Result;
+                totalMarks += res.total;
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${m.subject} <span style="font-size: 0.7rem; color: var(--primary)">${m.type.toUpperCase()}</span></td>
+                        <td>${m.sems.sem1.mid1}</td>
+                        <td>${m.sems.sem1.mid2}</td>
+                        <td>${res.internal.toFixed(1)}</td>
+                        <td>${m.sems.sem1.exam}</td>
+                        <td>${res.total}</td>
+                        <td><b>${res.grade}</b></td>
+                    </tr>
+                `;
+            });
+
+            const myAvg = data.marks.length > 0 ? (totalMarks / data.marks.length).toFixed(1) : 0;
+            document.getElementById('stud-avg').innerText = myAvg;
+
+            const user = JSON.parse(sessionStorage.getItem('student'));
+            const classStats = DB.getAllClassStats(user.branch, user.year, '1');
+            document.getElementById('class-avg').innerText = classStats ? classStats.average : 0;
+
+            // Basic Rank Calculation
+            const db = DB.getData();
+            const allStudentsInClass = db.records.filter(r => r.branch === user.branch && r.year === user.year);
+            const rankings = allStudentsInClass.map(r => {
+                const mks = db.marks.filter(m => m.rollNo === r.rollNo);
+                const avg = mks.length > 0 ? mks.reduce((a, b) => a + b.sem1Result.total, 0) / mks.length : 0;
+                return { rollNo: r.rollNo, avg };
+            }).sort((a, b) => b.avg - a.avg);
+
+            const rank = rankings.findIndex(r => r.rollNo === user.rollNo) + 1;
+            document.getElementById('stud-rank').innerText = rank > 0 ? rank : '--';
+        }
+
+        window.logout = () => {
+            sessionStorage.removeItem('student');
+            location.reload();
+        };
+
+        if (sessionStorage.getItem('student')) initDashboard();
+    </script>
+</body>
+
+</html>
